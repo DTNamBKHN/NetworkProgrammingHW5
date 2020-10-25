@@ -331,7 +331,7 @@ int main(int argc, char *argv[]){
         //read data from socket 
         n = read(newsockfd,username,BUFLEN); 
         if (n < 0) error("ERROR reading from socket");
-        if (strcmp(username, "") == 0){
+        if (strcmp(username, "\n") == 0){
             //write data via socket
             memset(sendbuff, '\0', BUFLEN);
             strcpy(sendbuff, "Closing...");

@@ -55,20 +55,38 @@ int main(int argc, char *argv[])
         memset(sendbuff, '\0', BUFLEN); //Khoi tao buffer
         fflush(stdin);
         fgets(sendbuff,BUFLEN,stdin); //Chua thong diep doc tu ban phim 
-        sendbuff[strlen(sendbuff) - 1] = '\0';
-        //send data to server
-        n = write(sockfd,sendbuff,strlen(sendbuff));
-        if (n < 0) 
-            error("ERROR writing to socket");
-        
-        //Nhan du lieu tu server
-        memset(recvbuff, '\0', BUFLEN);
-        n = read(sockfd,recvbuff,BUFLEN);
-        if (n < 0) 
-            error("ERROR reading from socket");
-        if(strcmp(recvbuff, "Closing...") == 0)
-            break;
-        printf("%s\n",recvbuff);
+        if (sendbuff[0] == '\n'){
+            //send data to server
+            n = write(sockfd,sendbuff,strlen(sendbuff));
+            if (n < 0) 
+                error("ERROR writing to socket");
+            
+            //Nhan du lieu tu server
+            memset(recvbuff, '\0', BUFLEN);
+            n = read(sockfd,recvbuff,BUFLEN);
+            if (n < 0) 
+                error("ERROR reading from socket");
+            if(strcmp(recvbuff, "Closing...") == 0){
+                printf("%s\n",recvbuff);
+                break;
+            }
+        }
+        else{
+            sendbuff[strlen(sendbuff) - 1] = '\0';
+            //send data to server
+            n = write(sockfd,sendbuff,strlen(sendbuff));
+            if (n < 0) 
+                error("ERROR writing to socket");
+            
+            //Nhan du lieu tu server
+            memset(recvbuff, '\0', BUFLEN);
+            n = read(sockfd,recvbuff,BUFLEN);
+            if (n < 0) 
+                error("ERROR reading from socket");
+            if(strcmp(recvbuff, "Closing...") == 0)
+                break;
+            printf("%s\n",recvbuff);
+        }
     }
 
     close(sockfd); //Dong socket 
