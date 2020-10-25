@@ -8,14 +8,14 @@
 #include <netdb.h> 
 #include <arpa/inet.h>
 #include <errno.h>
-
+#define BUFLEN 512	//Max length of buffer
 int main(int argc, char *argv[])
 {
     int sockfd, portno, n;
     struct sockaddr_in serv_addr; //Cau truc chua dia chi server ma client can biet de ket noi toi
 
-    char sendbuff[256];
-    char recvbuff[256];
+    char sendbuff[BUFLEN];
+    char recvbuff[BUFLEN];
 
     //Client nhan tham so hostname va port tu dong lenh
     if (argc < 3) {
@@ -52,22 +52,25 @@ int main(int argc, char *argv[])
     while(1){
         printf("Please enter the message: ");
     
-        memset(sendbuff, 0, 256); //Khoi tao buffer
-        fgets(sendbuff,255,stdin); //Chua thong diep doc tu ban phim 
-        
-        //Gui du lieu den server bang cach ghi ra socket vua thiet lap
+        memset(sendbuff, '\0', BUFLEN); //Khoi tao buffer
+        fflush(stdin);
+        fgets(sendbuff,BUFLEN,stdin); //Chua thong diep doc tu ban phim 
+        sendbuff[strlen(sendbuff) - 1] = '\0';
+        //send data to server
         n = write(sockfd,sendbuff,strlen(sendbuff));
         if (n < 0) 
             error("ERROR writing to socket");
         
         //Nhan du lieu tu server
-        memset(recvbuff, 0, 256);
-        n = read(sockfd,recvbuff,255);
+        memset(recvbuff, '\0', BUFLEN);
+        n = read(sockfd,recvbuff,BUFLEN);
         if (n < 0) 
             error("ERROR reading from socket");
+        if(strcmp(recvbuff, "Closing...") == 0)
+            break;
         printf("%s\n",recvbuff);
     }
-    
+
     close(sockfd); //Dong socket 
     return 0;
 }
