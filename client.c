@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
         fgets(sendbuff,BUFLEN,stdin); //Chua thong diep doc tu ban phim 
         if (sendbuff[0] == '\n'){
             //send data to server
+            sendbuff[1] = '\0';
             n = write(sockfd,sendbuff,strlen(sendbuff));
             if (n < 0) 
                 error("ERROR writing to socket");
